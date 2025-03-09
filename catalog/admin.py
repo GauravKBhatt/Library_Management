@@ -13,6 +13,12 @@ class BookAdmin(admin.ModelAdmin):
     # since genre field is many to many field, to reduce large database access "cost", we use display_genre function.
     list_display=('title','language','author','display_genre')
     inlines = [BooksInstanceInline]
+
+    def display_genre(self):
+        return ','.join(genre.name for genre in self.genre.all()[:3])
+    display_genre.short_description='Genre'
+
+
 @admin.register(BookInstance)
 class BookInstanceAdmin(admin.ModelAdmin):
     list_display=('id','due_back')
