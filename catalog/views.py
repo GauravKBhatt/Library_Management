@@ -23,7 +23,7 @@ class BooksView(View):
         context={"books":books}
         return render(request,'catalog/books.html',context)
     
-class BookView(View):
+class BookDetailView(View):
     def get(self,request,*args,**kwargs):
         pk=kwargs.get('pk')
         book_instance=Book.objects.get(id=pk)
@@ -36,7 +36,7 @@ class AuthorsView(View):
         context={"authors":authors}
         return render(request,'catalog/authors.html',context)
     
-class AuthorView(View):
+class AuthorDetailView(View):
     def get(self,request,*args,**kwargs):
         pk=kwargs.get('pk')
         author_instance=Author.objects.get(id=pk)
