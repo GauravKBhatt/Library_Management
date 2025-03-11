@@ -3,6 +3,11 @@ from django.urls import reverse
 from django.db.models import UniqueConstraint
 from django.db.models.functions import Lower
 import uuid
+from django.conf import settings
+from django.contrib.auth.models import User
+from datetime import date
+
+
 
 class Genre(models.Model):
     name=models.CharField(
@@ -122,10 +127,22 @@ class BookInstance(models.Model):
         default='m',
         help_text='Book AVailability',
     )
+    borrower=models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
     class Meta:
         ordering=['-due_back']
+        permissions = (("can_mark_returned", "Set book as returned"),)
 
     def __str__(self):
         return f'{self.id} ({self.book.title})'
+    
+    @property
+    def is_overdue(self):
+        return bool(self.due_back and date.today() > self.due_back)
+
     
 

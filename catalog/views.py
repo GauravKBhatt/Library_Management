@@ -2,9 +2,13 @@ from django.shortcuts import render
 from django.views import View
 from .models import *
 from django.views.generic import ListView,DetailView
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import PermissionRequiredMixin
 
 
-class HomeView(View):
+class HomeView(LoginRequiredMixin,View):
+    login_url='/login/'
+    redirect_field_name='redirect_to'
     def get(self,request,*args,**kwargs):
         num_books=Book.objects.all().count()
         num_instances=BookInstance.objects.all().count()
@@ -48,3 +52,26 @@ class AuthorDetailView(DetailView):
     model=Author
     template_name="catalog/author.html"
     context_object_name="author"
+
+class LoanedBooksByUserListView(LoginRequiredMixin,ListView):
+    model=BookInstance
+    template_name='catalog/bookinstance_list_borrowed_user.html'
+    paginate_by=10
+
+    def get_queryset(self):
+        return(
+            BookInstance.objects.filter(borrower=self.request.user)
+            .filter(status__exact='o').order_by('due_back')
+        )
+
+class LibrarianView(PermissionRequiredMixin,ListView):
+    model=BookInstance
+    permission_required='catalog.can_mark_returned'
+    template_name='catalog/bookinstance_list_books_librarian.html'
+    paginate_by=10
+
+    def get_queryset(self):
+        return(
+            BookInstance.objects
+            .filter(status__exact='o').order_by('due_back')
+        )
