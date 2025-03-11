@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.views import View
 from .models import *
+from django.views.generic import ListView,DetailView
 
 
 class HomeView(View):
@@ -17,28 +18,29 @@ class HomeView(View):
         }
         return render(request,'catalog/home.html',context)
 
-class BooksView(View):
-    def get(self,request,*args,**kwargs):
-        books=Book.objects.all()
-        context={"books":books}
-        return render(request,'catalog/books.html',context)
+class BookListView(ListView):
+    model=Book
+    template_name='catalog/books.html'
+    context_object_name='books'
+    paginate_by=2
+    # def get(self,request,*args,**kwargs):
+    #     books=Book.objects.all()
+    #     context={"books":books}
+    #     return render(request,'catalog/books.html',context)
     
-class BookDetailView(View):
+class BookDetailView(ListView):
     def get(self,request,*args,**kwargs):
         pk=kwargs.get('pk')
         book_instance=Book.objects.get(id=pk)
         context={"book":book_instance}
         return render(request,'catalog/book.html',context)
     
-class AuthorsView(View):
-    def get(self,request,*args,**kwargs):
-        authors=Author.objects.all()
-        context={"authors":authors}
-        return render(request,'catalog/authors.html',context)
-    
-class AuthorDetailView(View):
-    def get(self,request,*args,**kwargs):
-        pk=kwargs.get('pk')
-        author_instance=Author.objects.get(id=pk)
-        context={"book":author_instance}
-        return render(request,'catalog/author.html',context)
+class AuthorsView(ListView):
+    model=Author
+    template_name="catalog/authors.html"
+    context_object_name="authors"
+    paginate_by=5    
+class AuthorDetailView(DetailView):
+    model=Author
+    template_name="catalog/author.html"
+    context_object_name="author"
