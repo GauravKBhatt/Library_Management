@@ -9,6 +9,8 @@
       {% for bookinst in bookinstance_list %}
       <li class="{% if bookinst.is_overdue %}text-danger{% endif %}">
         <a href="{% url 'book-detail' bookinst.book.pk %}">{{ bookinst.book.title }}</a> ({{ bookinst.due_back }} {{bookinst.borrower}})
+        <!-- no need to specify the permissions because this page already has permission mixin -->
+        <a href="{% url 'renew-book-librarian' bookinst.id %}">Renew</a>
       </li>
       {% endfor %}
     </ul>

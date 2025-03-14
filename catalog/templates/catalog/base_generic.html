@@ -28,10 +28,13 @@
    {% if user.is_authenticated %}
    <li>User: {{ user.get_username }}</li>
       {% if user.is_staff %}
-          <li><a href="{% url 'librarian-view' %}"> Borrowed Books</a></li>
+          <li><a href="{% url 'all-borrowed' %}"> Borrowed Books</a></li>
       {% else %}    
           <li><a href="{% url 'my-borrowed' %}">My Borrowed</a></li>
       {% endif %}
+      {% if perms.catalog.add_author %}
+   <li><a href="{% url 'author-create' %}">Create author</a></li>
+{% endif %}
 
    <li>
      <form id="logout-form" method="post" action="{% url 'admin:logout' %}">
